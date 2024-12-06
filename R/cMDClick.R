@@ -9,17 +9,17 @@
 #' @importFrom glue glue
 #'
 #' @return
-#'   * cmdListTables() returns a character vector of table names
-#'   * cmdColNames() returns a character vector of column names
-#'   * cmdHead() returns a tibble of the first few rows of a table
-#'   * cmdGetMarker() returns a tibble of marker data
-#'   * cmdGetRelab() returns a tibble of bug relative abundance data
+#'   * cMDListTables() returns a character vector of table names
+#'   * cMDColNames() returns a character vector of column names
+#'   * cMDHead() returns a tibble of the first few rows of a table
+#'   * cMDGetMarker() returns a tibble of marker data
+#'   * cMDGetRelab() returns a tibble of bug relative abundance data
 #'
 #' @examples
 #' conn <- clickhouse_connect(dsn = "ClickHouseDSN")
-#' cmdListTables(conn)
+#' cMDListTables(conn)
 #' @export
-cmdListTables <- function(con) {
+cMDListTables <- function(con) {
     con |>
         DBI::dbListTables() |>
         grep("src_cmgd_v4", x=_, value = TRUE)
@@ -27,18 +27,18 @@ cmdListTables <- function(con) {
 
 #' @name cMDclick
 #' @examples
-#' cmdColNames(conn, "src_cmgd_v4__marker_abundance")
+#' cMDColNames(conn, "src_cmgd_v4__marker_abundance")
 #' @export
-cmdColNames <- function(con, tblName) {
+cMDColNames <- function(con, tblName) {
     con |>
         DBI::dbListFields(tblName)
 }
 
 #' @name cMDclick
 #' @examples
-#' cmdHead(conn, "src_cmgd_v4__marker_abundance")
+#' cMDHead(conn, "src_cmgd_v4__marker_abundance")
 #' @export
-cmdHead <- function(con, tblName, n = 6) {
+cMDHead <- function(con, tblName, n = 6) {
     con |>
         dplyr::tbl(tblName) |>
         utils::head(n)
@@ -46,11 +46,11 @@ cmdHead <- function(con, tblName, n = 6) {
 
 #' @name cMDclick
 #' @examples
-#' cmdGetMarker(conn, samples = "SAMEA103958109")
+#' cMDGetMarker(conn, samples = "SAMEA103958109")
 #'
-#' cmdGetMarker(conn, features = "UniClust90_AGMDBMFK00910|1__15|SGB72336")
+#' cMDGetMarker(conn, features = "UniClust90_AGMDBMFK00910|1__15|SGB72336")
 #' @export
-cmdGetMarker <- function(
+cMDGetMarker <- function(
     con, features = NULL, samples = NULL, type = c("abundance", "presence")
 ) {
     type <- match.arg(type)
@@ -71,11 +71,11 @@ cmdGetMarker <- function(
 #' @name cMDclick
 #' @importFrom rlang `!!`
 #' @examples
-#' cmdGetRelab(
+#' cMDGetRelab(
 #'     conn, features = "k__Bacteria", filter_by = "marker_concatenated"
 #' )
 #' @export
-cmdGetRelab <- function(
+cMDGetRelab <- function(
     con, features = NULL, samples = NULL,
     filter_by = c("ncbi_tax_id", "marker_concatenated")
 ) {

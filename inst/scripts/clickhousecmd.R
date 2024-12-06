@@ -22,15 +22,15 @@ con <- function() {
 
 con()
 
-## List tables in the cmd database
-tblNames <- cmdListTables(con())
+## List tables in the cMD database
+tblNames <- cMDListTables(con())
 
 ## Get marker data (presence, abundance)
-mAb <- cmdGetMarker(con(), features = feat)
-mPr <- cmdGetMarker(con(), features = feat, type = "p")
+mAb <- cMDGetMarker(con(), features = feat)
+mPr <- cMDGetMarker(con(), features = feat, type = "p")
 
 ## Get bug relative abundance data
-relab <- cmdGetRelab(con(), features = ncbi_ids)
+relab <- cMDGetRelab(con(), features = ncbi_ids)
 
 ## TODO convert to matrix
 
@@ -150,17 +150,17 @@ relab <- cmdGetRelab(con(), features = ncbi_ids)
 
 
 # library(curatedMetagenomicData)
-# cmd_data <- curatedMetagenomicData("AsnicarF_2017", dryrun = FALSE)
-# names(cmd_data)
+# cMD_data <- curatedMetagenomicData("AsnicarF_2017", dryrun = FALSE)
+# names(cMD_data)
 # 
 # 
-# cmd_data$`2021-10-14.AsnicarF_2017.marker_abundance` |> 
+# cMD_data$`2021-10-14.AsnicarF_2017.marker_abundance` |> 
 #     rowData()
 # 
-# cmd_data$`2021-10-14.AsnicarF_2017.marker_presence` |> 
+# cMD_data$`2021-10-14.AsnicarF_2017.marker_presence` |> 
 #     rowData()
 # 
-# cmd_data$`2021-10-14.AsnicarF_2017.relative_abundance` |>
+# cMD_data$`2021-10-14.AsnicarF_2017.relative_abundance` |>
 #     rowData()
 # 
 # 
