@@ -1,92 +1,94 @@
+#' @rdname cMDclick
+#'
+#' @title Helper functions to interact with ClickHouse using the ODBC driver.
+#'
+#' @description These functions provide a simple interface to interact with a
+#' ClickHouse database using the ODBC driver.
+#'
+#' @importFrom dplyr filter as_tibble tbl
+#' @importFrom glue glue
+#'
+#' @return
+#'   * cmdListTables() returns a character vector of table names
+#'   * cmdColNames() returns a character vector of column names
+#'   * cmdHead() returns a tibble of the first few rows of a table
+#'   * cmdGetMarker() returns a tibble of marker data
+#'   * cmdGetRelab() returns a tibble of bug relative abundance data
+#'
+#' @examples
+#' conn <- clickhouse_connect(dsn = "ClickHouseDSN")
+#' cmdListTables(conn)
+#' @export
 cmdListTables <- function(con) {
-    x <- con |> 
-        DBI::dbListTables() |> 
-        {\(y) grep("src_cmgd_v4", y, value = TRUE)}()
-    # names(x) <- x
-    x
+    con |>
+        DBI::dbListTables() |>
+        grep("src_cmgd_v4", x=_, value = TRUE)
 }
 
+#' @name cMDclick
+#' @examples
+#' cmdColNames(conn, "src_cmgd_v4__marker_abundance")
+#' @export
 cmdColNames <- function(con, tblName) {
-    con |> 
+    con |>
         DBI::dbListFields(tblName)
 }
 
-cmdHead <- function(con, tblName, n = 100) {
-    con |> 
-        dplyr::tbl(tblName) |> 
-        head(n) |> 
-        dplyr::as_tibble()
+#' @name cMDclick
+#' @examples
+#' cmdHead(conn, "src_cmgd_v4__marker_abundance")
+#' @export
+cmdHead <- function(con, tblName, n = 6) {
+    con |>
+        dplyr::tbl(tblName) |>
+        utils::head(n)
 }
 
-cmdGet <- function(features, samples, type) {
-    
-}
-
+#' @name cMDclick
+#' @examples
+#' cmdGetMarker(conn, samples = "SAMEA103958109")
+#'
+#' cmdGetMarker(conn, features = "UniClust90_AGMDBMFK00910|1__15|SGB72336")
+#' @export
 cmdGetMarker <- function(
-        con, features = NULL, samples = NULL, type = c("abundance", "presence")
+    con, features = NULL, samples = NULL, type = c("abundance", "presence")
 ) {
-    type <- match.arg(type, choices = c("abundance", "presence"))
-    q <-  stringr::str_c(
-        "SELECT sample_id AS sample, marker_id AS feature, ", type, "\n",
-        "FROM src_cmgd_v4__marker_", type, "\n"
-    )
-    if (!is.null(features) && !is.null(samples)) {
-        featuresVar <- paste(paste0("'", features, "'"), collapse = ",")
-        samplesVar <- paste(paste0("'", samples, "'"), collapse = ",")
-        q <- stringr::str_c(
-            q, 
-            stringr::str_c(
-                "WHERE sample IN (", samplesVar ,
-                ") AND feature IN (", featuresVar, ")"
-            )
-        )
-    } else if (!is.null(features)) {
-        featuresVar <- paste(paste0("'", features, "'"), collapse = ",")
-        q <- stringr::str_c(q, stringr::str_c("WHERE feature IN (", featuresVar, ")"))
-    } else if (!is.null(samples)) {
-        samplesVar <- paste(paste0("'", samples, "'"), collapse = ",")
-        q <- stringr::str_c(
-            q, stringr::str_c("WHERE sample IN (", samplesVar, ")"))
-    } else {
-        return(NULL)
-    }
-    DBI:: dbGetQuery(conn = con, statement = q) |> 
-        dplyr::as_tibble()
+    type <- match.arg(type)
+    tab <- glue::glue("src_cmgd_v4__marker_{type}")
+
+    dplyr::tbl(con, tab) |>
+        dplyr::filter(
+            if (!is.null(features)) {
+                "marker_id" %in% features
+            } else { TRUE },
+            if (!is.null(samples)) {
+                "sample_id" %in% samples
+            } else { TRUE }
+        ) |>
+        tibble::as_tibble()
 }
 
-
+#' @name cMDclick
+#' @importFrom rlang `!!`
+#' @examples
+#' cmdGetRelab(
+#'     conn, features = "k__Bacteria", filter_by = "marker_concatenated"
+#' )
+#' @export
 cmdGetRelab <- function(
-    con, features = NULL, samples = NULL, type = c("ncbi", "metaphlan")
+    con, features = NULL, samples = NULL,
+    filter_by = c("ncbi_tax_id", "marker_concatenated")
 ) {
-    type <- match.arg(type, choices = c("ncbi", "metaphlan"))
-    q <- stringr::str_c(
-        "SELECT \"CAST(relative_abundance, 'Float32')\" AS relab, ",
-        "sample_id AS sample, marker_concatenated AS metaphlan, ",
-        "ncbi_tax_id AS ncbi\n",
-        "FROM src_cmgd_v4__bugs_list\n"
-    )
-    if (!is.null(features) && !is.null(samples)) {
-        featuresVar <- paste(paste0("'", features, "'"), collapse = ",")
-        samplesVar <- paste(paste0("'", samples, "'"), collapse = ",")
-        q <- stringr::str_c(
-            q, 
-            stringr::str_c(
-                "WHERE sample IN (", samplesVar ,
-                ") AND ", type, " IN (", featuresVar, ")"
-            )
-        )
-    } else if (!is.null(features)) {
-        featuresVar <- paste(paste0("'", features, "'"), collapse = ",")
-        q <- stringr::str_c(q, stringr::str_c(
-            "WHERE ", type, " IN (", featuresVar, ")")
-        )
-    } else if (!is.null(samples)) {
-        samplesVar <- paste(paste0("'", samples, "'"), collapse = ",")
-        q <- stringr::str_c(
-            q, stringr::str_c("WHERE sample IN (", samplesVar, ")"))
-    } else {
-        return(NULL)
-    }
-    DBI:: dbGetQuery(conn = con, statement = q) |> 
-        dplyr::as_tibble()
+    filter_by <- match.arg(filter_by)
+    filter_by <- rlang::sym(filter_by)
+    dplyr::tbl(con, "src_cmgd_v4__bugs_list") |>
+        dplyr::filter(
+            if (!is.null(features)) {
+                !!filter_by %in% features
+            } else { TRUE },
+            if (!is.null(samples)) {
+                "sample_id" %in% samples
+            } else { TRUE }
+        ) |>
+        tibble::as_tibble()
 }

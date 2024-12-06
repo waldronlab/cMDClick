@@ -7,6 +7,11 @@ Authors@R:
             "Samuel", "Gamboa", role = c("aut", "cre"),
             email = "samuel.gamboa.tuz@gmail.com",
             comment = c(ORCID = "0000-0002-6863-7943")
+        ),
+        person(
+            "Marcel", "Ramos", role = c("aut", "ctb"),
+            email = "marcel.ramos@sph.cuny.edu", 
+            comment = c(ORCID = "0000-0002-3242-0582")
         )
     )
 Description:
@@ -17,9 +22,13 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: 
-    ClickHouseHTTP,
     config,
     DBI,
-    dplyr
+    dplyr,
+    glue,
+    odbc,
+    rlang,
+    tibble,
+    utils
 Depends:
     R (>= 4.4.0)
