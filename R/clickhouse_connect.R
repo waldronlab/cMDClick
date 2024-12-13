@@ -57,7 +57,7 @@
 clickhouse_connect <- function(
     dsn = NULL,
     host = config::get()$host,
-    port = 8443,
+    port = config::get()$port,
     database = config::get()$db,
     user = config::get()$user,
     password = config::get()$password
@@ -74,7 +74,7 @@ clickhouse_connect <- function(
             Port = port,
             Database = database,
             UID = user,
-            PWD = password,
+            PWD = password
         )
     }
     conn
