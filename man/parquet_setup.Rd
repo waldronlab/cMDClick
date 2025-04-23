@@ -67,18 +67,32 @@ the full data from the server.
 }
 \examples{
 if (interactive()) {
+    ## establish a connection to the DuckDB database
     con <- parquet_setup()
     parquet_import(con, dataType = "metaphlan_bugs", verbose = TRUE)
+
     ## check the local cache for downloaded tables
     DBI::dbListTables(con)
+
     ## query the local cache and filter
-    dplyr::tbl(con, "metaphlan_bugs") |>
+    relab <- dplyr::tbl(con, "metaphlan_bugs") |>
         dplyr::filter(tax_id_string == "2|1239||||") |>
         dplyr::collect()
+    relab
     ## query the parquet file remotely
     parquet_tbl(con, "metaphlan_bugs") |>
         dplyr::filter(tax_id_string == "2|1239||||") |>
         dplyr::collect()
+
+    ## convert to wide table
+    relab |>
+        dplyr::select("sample_id", "clade_name", "relative_abundance") |>
+        tidyr::pivot_wider(
+            names_from = "sample_id",
+            values_from = "relative_abundance"
+        )
+
+    ## disconnect
     DBI::dbDisconnect(con)
 }
 }
