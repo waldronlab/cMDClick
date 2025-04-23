@@ -8,7 +8,11 @@
 \usage{
 has_config()
 
-valid_config()
+valid_config(config = "~/config.yml")
+}
+\arguments{
+\item{config}{\code{character(1)} The path to the configuration file (default:
+\code{"~/config.yml"})}
 }
 \value{
 \itemize{

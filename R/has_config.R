@@ -10,6 +10,9 @@
 #'   configuration file has the required fields for connecting to the Clickhouse
 #'   server.
 #'
+#' @param config `character(1)` The path to the configuration file (default:
+#'   `"~/config.yml"`)
+#'
 #' @return * `has_config`: a logical named vector indicating if the user has an
 #'   ODBC configuration (`.odbc.ini`) or a general configuration (`config.yml`)
 #'   file.
@@ -31,10 +34,14 @@ has_config <- function() {
 #' @rdname config
 #'
 #' @export
-valid_config <- function() {
-    config <- file.path(Sys.getenv("HOME"), "config.yml")
+valid_config <- function(config = "~/config.yml") {
+    stopifnot(isScalarCharacter(config))
+
+    config <- suppressWarnings(normalizePath(config))
+
     if (!file.exists(config))
-        stop("No configuration file found in '~/config.yml'")
+        stop("No configuration file found at\n  ", config)
+
     BiocBaseUtils::checkInstalled("yaml")
 
     clist <- yaml::read_yaml(config)
