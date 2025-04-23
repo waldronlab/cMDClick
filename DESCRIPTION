@@ -1,6 +1,6 @@
 Package: cMDClick
 Title: Access to curatedMetagenomicData hosted on ClickHouse
-Version: 0.99.12
+Version: 0.99.13
 Authors@R: 
     c(
         person(
@@ -37,4 +37,4 @@ Imports:
     utils
 Depends:
     R (>= 4.4.0)
-Date: 2025-01-14
+Date: 2025-04-23
