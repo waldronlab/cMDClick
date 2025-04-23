@@ -20,7 +20,7 @@ file.
 }
 }
 \description{
-These are utitlities to check whether the user has an ODBC
+These are utilities to check whether the user has an ODBC
 configuration file or a general configuration file. These files are used to
 connect via ODBC driver either with an \code{.odbc.ini} file or a general
 configuration file \code{config.yml} as used by \code{config} R package. For details,

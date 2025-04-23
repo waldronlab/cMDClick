@@ -2,7 +2,7 @@
 #'
 #' @title Check and validate the user configuration file
 #'
-#' @description These are utitlities to check whether the user has an ODBC
+#' @description These are utilities to check whether the user has an ODBC
 #'   configuration file or a general configuration file. These files are used to
 #'   connect via ODBC driver either with an `.odbc.ini` file or a general
 #'   configuration file `config.yml` as used by `config` R package. For details,
@@ -36,14 +36,18 @@ valid_config <- function() {
     if (!file.exists(config))
         stop("No configuration file found in '~/config.yml'")
     BiocBaseUtils::checkInstalled("yaml")
+
     clist <- yaml::read_yaml(config)
-    if (!identical("default" ,names(clist)))
+
+    if (!identical("default", names(clist)))
         stop("No 'default' configuration found in '~/config.yml'")
 
     cfields <- c("host", "user", "password", "port", "db")
     found <- cfields %in% names(clist[["default"]])
     notfound <- paste0(cfields[!found], collapse = ", ")
+
     if (!all(found))
         stop("Missing fields in config.yml: ", notfound)
+
     TRUE
 }
