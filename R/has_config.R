@@ -13,6 +13,10 @@
 #' @param config `character(1)` The path to the configuration file (default:
 #'   `"~/config.yml"`)
 #'
+#' @details Either the `.odbc.ini` file or the `config.yml` file is required to
+#'   connect to the Clickhouse server. Either file must be in the user's home
+#'   directory.
+#'
 #' @return * `has_config`: a logical named vector indicating if the user has an
 #'   ODBC configuration (`.odbc.ini`) or a general configuration (`config.yml`)
 #'   file.

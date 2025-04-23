@@ -32,6 +32,11 @@ see \code{\link[=clickhouse_connect]{clickhouse_connect()}}. \code{valid_config}
 configuration file has the required fields for connecting to the Clickhouse
 server.
 }
+\details{
+Either the \code{.odbc.ini} file or the \code{config.yml} file is required to
+connect to the Clickhouse server. Either file must be in the user's home
+directory.
+}
 \examples{
 has_config()
 valid_config()
