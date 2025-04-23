@@ -11,9 +11,13 @@ has_config()
 valid_config()
 }
 \value{
-A logical vector indicating if the user has an ODBC configuration or
-a general configuration file (\code{has_config}) or a valid \code{config.yml} file
-(\code{valid_config}).
+\itemize{
+\item \code{has_config}: a logical named vector indicating if the user has an
+ODBC configuration (\code{.odbc.ini}) or a general configuration (\code{config.yml})
+file.
+\item \code{valid_config}: a logical value indicating if the user has a valid
+\code{config.yml} file.
+}
 }
 \description{
 These are utitlities to check whether the user has an ODBC

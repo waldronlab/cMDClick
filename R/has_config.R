@@ -10,9 +10,11 @@
 #'   configuration file has the required fields for connecting to the Clickhouse
 #'   server.
 #'
-#' @return A logical vector indicating if the user has an ODBC configuration or
-#'   a general configuration file (`has_config`) or a valid `config.yml` file
-#'   (`valid_config`).
+#' @return * `has_config`: a logical named vector indicating if the user has an
+#'   ODBC configuration (`.odbc.ini`) or a general configuration (`config.yml`)
+#'   file.
+#' * `valid_config`: a logical value indicating if the user has a valid
+#'   `config.yml` file.
 #'
 #' @examples
 #' has_config()
@@ -21,8 +23,8 @@
 has_config <- function() {
     home <- Sys.getenv("HOME")
     c(
-        ODBC = file.exists(file.path(home, ".odbc.ini")),
-        config = file.exists(file.path(home, "config.yml"))
+        .odbc.ini = file.exists(file.path(home, ".odbc.ini")),
+        config.yml = file.exists(file.path(home, "config.yml"))
     )
 }
 
