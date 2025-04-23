@@ -122,6 +122,8 @@ parquet_tbl <-
 #' @param ask `logical(1)` Ask the user to create the cache directory if it does
 #'   not exist (default: `interactive()`).
 #'
+#' @importFrom BiocBaseUtils askUserYesNo
+#'
 #' @export
 cMDClickCache <-
     function(
@@ -138,11 +140,11 @@ cMDClickCache <-
     if (!dir.exists(cache_dir)) {
         if (ask) {
             qtxt <- sprintf(
-                "Create cMDClick cache at \n    %s? [y/n]: ",
+                "Create cMDClick cache at\n  %s",
                 cache_dir
             )
-            answer <- .getAnswer(qtxt, allowed = c("y", "Y", "n", "N"))
-            if (identical(answer, "n"))
+            answer <- askUserYesNo(qtxt)
+            if (!answer)
                 stop("'cMDClickCache' cache_dir not created. Use 'setCache'")
         }
         dir.create(cache_dir, recursive = TRUE, showWarnings = FALSE)
@@ -153,19 +155,4 @@ cMDClickCache <-
         message("cMDClick 'cache_dir' set to:\n    ", cache_dir)
 
     invisible(cache_dir)
-}
-
-.getAnswer <- function(msg, allowed)
-{
-    if (interactive()) {
-        repeat {
-            message(msg)
-            answer <- readLines(n = 1)
-            if (answer %in% allowed)
-                break
-        }
-        tolower(answer)
-    } else {
-        "n"
-    }
 }
